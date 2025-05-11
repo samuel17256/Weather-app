@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="flex flex-col justify-center items-center bg-contain bg-sky-500  min-h-screen">
+        <div class="py-2 mb-4">
+            <h1 class="text-center mb-4 text-2xl font-bold text-zinc-800">Singapore Weather App</h1>
+
+            <div id="result">
+
+
+            </div>
+        </div>
+
+        <div>
+            <p class="text-lg">My Github link :<a href="" class="text-sm text-white underline">Github link</a></p>
+        </div>
+    </div>
+    
+
+    <script>
+        // fetch("https://api.data.gov.sg/v1/environment/air-temperature")
+        //     .then((res) => res.json())
+        //     .then((data) => {
+        //         let resultDiv = document.getElementById("result");
+
+        //         let status = data.api_info.status;
+        //         let statusElement = document.createElement("p");
+        //         statusElement.innerHTML =` API Status: ${status}`;
+        //         resultDiv.appendChild(statusElement);
+
+        //         let timestamp = data.items[0].timestamp;
+        //         let timeElement = document.createElement("p");
+        //         timeElement.innerHTML =` Timestamp: ${timestamp}`;
+        //         resultDiv.appendChild(timeElement);
+
+        //         let readings = data.items[0].readings;
+        //         readings.forEach((reading) => {
+        //             let stationInfo = data.metadata.stations.find(
+        //                 (station) => station.id === reading.station_id
+        //             );
+        //             let p = document.createElement("p");
+        //             p.innerHTML =` Station: ${stationInfo.name} | Temperature: ${reading.value}°C | Latitude ${stationInfo.location.latitude} | Longitude ${stationInfo.location.longitude}`;
+        //             resultDiv.appendChild(p);
+        //         });
+
+        //         console.log(data);
+        //     })
+        //     .catch((error) => {
+        //         let errorElement = document.createElement("p");
+        //         errorElement.innerHTML =` Error: ${error.message}`;
+        //         document.getElementById("result").appendChild(errorElement);
+        //     });
+
+        fetch("https://api.data.gov.sg/v1/environment/air-temperature").then((res) => res.json()).then((data) => {
+    let resultDiv = document.getElementById("result");
+
+    // API status
+    let status = data.api_info.status;
+    let statusElement = document.createElement("p");
+    statusElement.innerHTML = `<b>API Status:</b>  ${status}`;
+    resultDiv.appendChild(statusElement);
+
+    // Timestamp
+    let timestamp = data.items[0].timestamp;
+    let timeElement = document.createElement("p");
+    timeElement.innerHTML = `<b>Timestamp:</b> ${timestamp}`;
+    resultDiv.appendChild(timeElement);
+
+    // Creating table
+    let table = document.createElement("table");
+    table.style.border='1px solid #ccc'
+    table.style.width="100%"
+    table.innerHTML = `
+            <caption>Displaying Weather data of some places in SINGAPORE</caption>
+        <thead>
+            <tr>
+                <th class="p-4 border border-2">s/n</th>
+                <th class="p-4 border border-2">Station</th>
+                <th class="p-4 border border-2">Temperature (°C)</th>
+                <th class="p-4 border border-2">Latitude</th>
+                <th class="p-4 border border-2">Longitude</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    let tbody = table.querySelector("tbody");
+        let num=1;
+    let readings = data.items[0].readings;
+    readings.forEach((reading) => {
+        let stationInfo = data.metadata.stations.find(
+            (station) => station.id === reading.station_id
+        );
+
+        let row = document.createElement("tr");
+        row.innerHTML = `
+            <td class="p-4 border border-2">${num++}</td>
+            <td class="p-4 border border-2">${stationInfo.name}</td>
+            <td class="p-4 border border-2">${reading.value}</td>
+            <td class="p-4 border border-2">${stationInfo.location.latitude}</td>
+            <td class="p-4 border border-2">${stationInfo.location.longitude}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    resultDiv.appendChild(table);
+    console.log(data);
+})
+
+    </script>
+</body>
+</html>
